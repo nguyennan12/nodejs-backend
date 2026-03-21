@@ -13,5 +13,6 @@ Router.post('/shop/login', asyncHandler(accessController.login))
 Router.use(authentication)
 //logout
 Router.post('/shop/logout', asyncHandler(accessController.logout))
+Router.post('/shop/handlerRefreshToken', asyncHandler(accessController.handlerRefreshToken))
 
 export const accessRouter = Router

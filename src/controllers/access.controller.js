@@ -23,8 +23,16 @@ class AccessController {
   logout = async (req, res, next) => {
     new ApiSuccess({
       statusCode: StatusCodes.OK,
-      message: 'logout successfully!',
+      message: 'Logout successfully!',
       metadata: await AccessService.logout(req.keyStore)
+    }).send(res)
+  }
+
+  handlerRefreshToken = async (req, res, next) => {
+    new ApiSuccess({
+      statusCode: StatusCodes.OK,
+      message: 'Get token successfully!',
+      metadata: await AccessService.handlerRefreshToken(req.body.refreshToken)
     }).send(res)
   }
 }

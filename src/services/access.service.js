@@ -1,13 +1,15 @@
 /* eslint-disable no-unused-vars */
 import shopModel from '#models/shop.model.js'
 import bcrypt from 'bcrypt'
-import crypto from 'crypto'
+import crypto, { verify } from 'crypto'
 import KeyTokenService from './keyToken.service.js'
-import { createTokenPair } from '#auth/authUntils.js'
+import { createTokenPair, verifyJWT } from '#auth/authUntils.js'
 import { StatusCodes } from 'http-status-codes'
 import { getInfoData } from '#utils/index.js'
 import ApiError from '#core/error.response.js'
 import { shopService } from './shop.service.js'
+import keyTokenModel from '#models/keyToken.model.js'
+import { ref } from 'process'
 
 const ROLE_SHOP = {
   SHOP: 'SHOP',
@@ -84,6 +86,44 @@ class AccessService {
   static logout = async (keyStore) => {
     if (!keyStore?._id) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid keyStore')
     return await KeyTokenService.removeKeyById(keyStore._id)
+  }
+
+  // ===== refreshToken ======
+  static handlerRefreshToken = async (refreshToken) => {
+    const tokenUsed = await KeyTokenService.findByRefreshTokenUsed(refreshToken)
+
+    //token da duoc su dunng r
+    if (tokenUsed) {
+      const { userId, email } = verifyJWT(refreshToken, tokenUsed.publicKey)
+      await KeyTokenService.deleteKeyById(userId)
+      throw new ApiError(StatusCodes.FORBIDDEN, 'Something wrong happen! please relogin')
+    }
+
+    //token dang dc su dung
+    const tokenExists = await KeyTokenService.findByRefreshToken(refreshToken)
+    if (!tokenExists) throw new ApiError(StatusCodes.UNAUTHORIZED, 'shop not registeted')
+    const { userId, email } = verifyJWT(refreshToken, tokenExists.publicKey)
+
+    const shopExists = await shopService.findByEmail({ email })
+    if (!shopExists) throw new ApiError(StatusCodes.UNAUTHORIZED, 'shop not registeted')
+
+    //tao cap token moi
+    const tokens = await createTokenPair({ userId, email }, tokenExists.publicKey, tokenExists.privateKey)
+
+    //update laji token
+    await tokenExists.updateOne({
+      $set: {
+        refreshToken: tokens.refreshToken
+      },
+      $addToSet: {
+        refreshTokenUsed: refreshToken
+      }
+    })
+
+    return {
+      user: { userId, email },
+      tokens
+    }
   }
 }
 
