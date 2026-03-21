@@ -1,3 +1,4 @@
+import ApiError from '#core/error.response.js'
 import { apiKeyService } from '#services/apiKey.service.js'
 import { StatusCodes } from 'http-status-codes'
 
@@ -10,16 +11,12 @@ const checkApiKey = async (req, res, next) => {
   try {
     const key = req.headers[HEADER.API_KEY]?.toString()
     if (!key) {
-      return res.status(StatusCodes.FORBIDDEN).json({
-        message: 'forbidden error'
-      })
+      throw new ApiError(StatusCodes.FORBIDDEN, 'forbidden error')
     }
     //check objKey
     const objKey = await apiKeyService.findById(key)
     if (!objKey) {
-      return res.status(StatusCodes.FORBIDDEN).json({
-        message: 'forbidden error'
-      })
+      throw new ApiError(StatusCodes.FORBIDDEN, 'forbidden error')
     }
 
     req.objKey = objKey
@@ -33,16 +30,12 @@ const checkApiKey = async (req, res, next) => {
 const checkPermission = (permission) => {
   return (req, res, next) => {
     if (!req.objKey || !req.objKey.permissions) {
-      return res.status(StatusCodes.FORBIDDEN).json({
-        message: 'permission denied'
-      })
+      throw new ApiError(StatusCodes.FORBIDDEN, 'permission denied')
     }
 
     const validPermisson = req.objKey.permissions.includes(permission)
     if (!validPermisson) {
-      return res.status(StatusCodes.FORBIDDEN).json({
-        message: 'permission denied'
-      })
+      throw new ApiError(StatusCodes.FORBIDDEN, 'permission denied')
     }
 
     return next()
