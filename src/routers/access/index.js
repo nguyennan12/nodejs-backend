@@ -6,6 +6,8 @@ const Router = express.Router()
 
 //sign up
 Router.post('/shop/signup', asyncHandler(accessController.signUp))
+//login
+Router.post('/shop/login', asyncHandler(accessController.login))
 
 
 export const accessRouter = Router

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import ApiSuccess from '#core/success.response.js'
 import AccessService from '#services/access.service.js'
 import { StatusCodes } from 'http-status-codes'
@@ -8,6 +9,14 @@ class AccessController {
       statusCode: StatusCodes.CREATED,
       message: 'Register successfully!',
       metadata: await AccessService.signUp(req.body)
+    }).send(res)
+  }
+
+  login = async (req, res, next) => {
+    new ApiSuccess({
+      statusCode: StatusCodes.CREATED,
+      message: 'Login successfully!',
+      metadata: await AccessService.login(req.body)
     }).send(res)
   }
 }

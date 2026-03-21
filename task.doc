@@ -1,0 +1,17 @@
+   ======== SIGNUP =========
+    1 - check holder in db
+    2 - hash password
+    3 - create user 
+    4 - create publicKey and privateKey and save
+    5 - generate tokens
+    6 - get data return signup
+   
+   
+    ======== LOGIN =========
+    1 - check email in db
+    2 - match password
+    3 - create accessToken and refreshToken and save
+    4 - generate tokens
+    5 - get data return login
+
+
