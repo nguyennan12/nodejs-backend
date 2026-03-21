@@ -26,35 +26,29 @@ class AccessService {
     const newShop = await shopModel.create({
       name, email, password: passwordHash, roles: [ROLE_SHOP.SHOP]
     })
-
-    if (newShop) {
-      const publicKey = crypto.randomBytes(64).toString('hex')
-      const privateKey = crypto.randomBytes(64).toString('hex')
-
-      const keyStore = await KeyTokenService.createKeyToken({
-        userId: newShop._id,
-        publicKey,
-        privateKey
-      })
-
-      if (!keyStore) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, 'keyStore error')
-      }
-
-      //create token pair
-      const tokens = await createTokenPair({ userId: newShop._id, email }, publicKey, privateKey)
-      console.log('token: ', tokens)
-      return {
-        code: StatusCodes.CREATED,
-        metadata: {
-          shop: getInfoData({ fields: ['_id', 'name', 'email'], object: newShop }),
-          tokens
-        }
-      }
+    //neu khong tao dc shop
+    if (!newShop) {
+      throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Register shop failed!')
     }
+    const publicKey = crypto.randomBytes(64).toString('hex')
+    const privateKey = crypto.randomBytes(64).toString('hex')
+
+    const keyStore = await KeyTokenService.createKeyToken({
+      userId: newShop._id,
+      publicKey,
+      privateKey
+    })
+
+    if (!keyStore) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, 'keyStore error')
+    }
+
+    //create token pair
+    const tokens = await createTokenPair({ userId: newShop._id, email }, publicKey, privateKey)
+
     return {
-      code: StatusCodes.OK,
-      metadata: null
+      shop: getInfoData({ fields: ['_id', 'name', 'email'], object: newShop }),
+      tokens
     }
   }
 }
