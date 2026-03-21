@@ -49,7 +49,7 @@ class AccessService {
     }
   }
 
-  // =====Login ======
+  // ===== Login ======
   static login = async ({ email, password, refreshToken = null }) => {
     const shopExists = await shopService.findByEmail({ email })
     if (!shopExists) throw new ApiError(StatusCodes.BAD_REQUEST, 'Shop not registered!')
@@ -71,6 +71,13 @@ class AccessService {
       shop: getInfoData({ fields: ['_id', 'name', 'email'], object: shopExists }),
       tokens
     }
+  }
+
+
+  // ===== LogOut ======
+  static logout = async (keyStore) => {
+    if (!keyStore?._id) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid keyStore')
+    return await KeyTokenService.removeKeyById(keyStore._id)
   }
 }
 

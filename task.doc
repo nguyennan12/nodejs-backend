@@ -14,4 +14,12 @@
     4 - generate tokens
     5 - get data return login
 
+        ======== AUTHENTICATION =========
+    1 - check userId missing
+    2 - get accessToken
+    3 - verify token
+    4 - check user in db
+    5 - check keyStore with this userId
+    6 - return next()
+
 

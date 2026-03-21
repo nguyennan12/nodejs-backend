@@ -1,5 +1,5 @@
 import keyTokenModel from '#models/keyToken.model.js'
-
+import { Types } from 'mongoose'
 class KeyTokenService {
   static createKeyToken = async ({ userId, publicKey, privateKey, refreshToken }) => {
     try {
@@ -12,6 +12,14 @@ class KeyTokenService {
     } catch (error) {
       throw error
     }
+  }
+
+  static findByUserId = async (userId) => {
+    return await keyTokenModel.findOne({ userId: new Types.ObjectId(userId) }).lean()
+  }
+
+  static removeKeyById = async (id) => {
+    return await keyTokenModel.deleteOne({ _id: id })
   }
 }
 
