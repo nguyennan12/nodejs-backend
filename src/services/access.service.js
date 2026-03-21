@@ -30,8 +30,11 @@ class AccessService {
 
     if (!newShop) throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Register shop failed!')
 
-    const publicKey = crypto.randomBytes(64).toString('hex')
-    const privateKey = crypto.randomBytes(64).toString('hex')
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 4096,
+      publicKeyEncoding: { type: 'pkcs1', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs1', format: 'pem' }
+    })
 
     const keyStore = await KeyTokenService.createKeyToken({
       userId: newShop._id,
@@ -57,8 +60,11 @@ class AccessService {
     const matchPassword = await bcrypt.compare(password, shopExists.password)
     if (!matchPassword) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Authentication error')
 
-    const publicKey = crypto.randomBytes(64).toString('hex')
-    const privateKey = crypto.randomBytes(64).toString('hex')
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 4096,
+      publicKeyEncoding: { type: 'pkcs1', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs1', format: 'pem' }
+    })
     const { _id: userId } = shopExists
     const tokens = await createTokenPair({ userId, email }, publicKey, privateKey)
 

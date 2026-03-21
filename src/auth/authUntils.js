@@ -14,12 +14,12 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
 
 
     const accessToken = JWT.sign(payload, privateKey, {
-      // algorithm: 'RS256',
+      algorithm: 'RS256',
       expiresIn: '2 days'
     })
 
-    const refreshToken = JWT.sign(payload, publicKey, {
-      // algorithm: 'RS256',
+    const refreshToken = JWT.sign(payload, privateKey, {
+      algorithm: 'RS256',
       expiresIn: '7 days'
     })
     return { accessToken, refreshToken }
@@ -39,7 +39,7 @@ const authentication = asyncHandler(async (req, res, next) => {
   if (!keyStore) throw new ApiError(StatusCodes.NOT_FOUND, 'Not found keyStore')
 
   try {
-    const decodeUser = JWT.verify(accessToken, keyStore.privateKey)
+    const decodeUser = JWT.verify(accessToken, keyStore.publicKey, { algorithms: ['RS256'] })
     if (userId !== decodeUser.userId) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid user id')
     req.keyStore = keyStore
     return next()
