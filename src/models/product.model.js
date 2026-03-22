@@ -69,10 +69,13 @@ const furnitureSchema = new Schema({
   timestamps: true
 })
 
+//create index for search
+productSchema.index({ product_name: 'text', product_description: 'text' })
 //document middleware (before save and create)
 productSchema.pre('save', async function () {
   this.product_slug = slugify(this.product_name, { lower: true })
 })
+
 
 export const productModel = model(DOCUMENT_NAME.PRODUCT, productSchema)
 export const clothingModel = model(DOCUMENT_NAME.CLOTHING, clothingSchema)

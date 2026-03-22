@@ -1,7 +1,7 @@
 import ApiError from '#core/error.response.js'
 import { productModel, electronicModel, clothingModel, furnitureModel } from '#models/product.model.js'
 import { StatusCodes } from 'http-status-codes'
-import { findAllDraftsForShop } from '#models/repository/product.repo.js'
+import productRepo from '#models/repository/product.repo.js'
 
 class ProductFatory {
 
@@ -19,10 +19,27 @@ class ProductFatory {
     return new productClass(payload).createProduct()
   }
 
+  //===== UPDATE =====
+  static async publishProductByShop({ product_shop, product_id }) {
+    return await productRepo.publishProductByShop({ product_shop, product_id })
+  }
+  static async unPublishProductByShop({ product_shop, product_id }) {
+    return await productRepo.unPublishProductByShop({ product_shop, product_id })
+  }
+
   //===== QUERY =====
   static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
     const query = { product_shop, isDraft: true }
-    return await findAllDraftsForShop({ query, limit, skip })
+    return await productRepo.queryProduct({ query, limit, skip })
+  }
+
+  static async findAllPublishForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isPublished: true }
+    return await productRepo.queryProduct({ query, limit, skip })
+  }
+
+  static async searchProducts({ keySearch }) {
+    return await productRepo.searchProducts({ keySearch })
   }
 }
 
