@@ -6,7 +6,7 @@ import JWT from 'jsonwebtoken'
 const HEADER = {
   API_KEY: 'x-api-key',
   CLIENT_ID: 'x-client-id',
-  AUTHORIZATION: 'authorization'
+  AUTHORIZATION: 'authorization'z
 }
 
 const createTokenPair = async (payload, publicKey, privateKey) => {

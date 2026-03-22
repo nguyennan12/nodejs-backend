@@ -6,13 +6,14 @@ import { authentication } from '#auth/authUntils.js'
 const Router = express.Router()
 
 //sign up
-Router.post('/shop/signup', asyncHandler(accessController.signUp))
+Router.post('/signup', asyncHandler(accessController.signUp))
 //login
-Router.post('/shop/login', asyncHandler(accessController.login))
+Router.post('/login', asyncHandler(accessController.login))
 //authentication
 Router.use(authentication)
 //logout
-Router.post('/shop/logout', asyncHandler(accessController.logout))
-Router.post('/shop/handlerRefreshToken', asyncHandler(accessController.handlerRefreshToken))
+Router.post('/logout', asyncHandler(accessController.logout))
+//refresh token
+Router.post('/handlerRefreshToken', asyncHandler(accessController.handlerRefreshToken))
 
 export const accessRouter = Router
