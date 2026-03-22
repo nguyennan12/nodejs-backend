@@ -59,6 +59,20 @@ class ProductController {
       metadata: await ProductService.searchProducts(req.query)
     }).send(res)
   }
+  findAllProducts = async (req, res, next) => {
+    new ApiSuccess({
+      statusCode: StatusCodes.CREATED,
+      message: 'find all products successfully!',
+      metadata: await ProductService.findAllProducts(req.query)
+    }).send(res)
+  }
+  findProduct = async (req, res, next) => {
+    new ApiSuccess({
+      statusCode: StatusCodes.CREATED,
+      message: 'find  product successfully!',
+      metadata: await ProductService.findProduct({ product_id: req.params.product_id })
+    }).send(res)
+  }
 }
 
 export default new ProductController()

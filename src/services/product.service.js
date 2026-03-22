@@ -3,6 +3,7 @@ import { productModel, electronicModel, clothingModel, furnitureModel } from '#m
 import { StatusCodes } from 'http-status-codes'
 import productRepo from '#models/repository/product.repo.js'
 
+
 class ProductFatory {
 
   static productRegistry = {}
@@ -26,6 +27,9 @@ class ProductFatory {
   static async unPublishProductByShop({ product_shop, product_id }) {
     return await productRepo.unPublishProductByShop({ product_shop, product_id })
   }
+  static async updateProduct() {
+
+  }
 
   //===== QUERY =====
   static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
@@ -40,6 +44,17 @@ class ProductFatory {
 
   static async searchProducts({ keySearch }) {
     return await productRepo.searchProducts({ keySearch })
+  }
+
+  static async findAllProducts({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true } }) {
+    return await productRepo.findAllProducts({
+      limit, sort, filter, page,
+      select: ['product_name', 'product_price', 'product_thumb']
+    })
+  }
+
+  static async findProduct({ product_id }) {
+    return productRepo.findProduct({ product_id, unSelect: ['__v', 'product_variations'] })
   }
 }
 

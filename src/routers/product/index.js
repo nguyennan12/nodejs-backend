@@ -6,6 +6,8 @@ import { authentication } from '#auth/authUntils.js'
 const Router = express.Router()
 
 Router.get('/search/', asyncHandler(productController.searchProducts))
+Router.get('', asyncHandler(productController.findAllProducts))
+Router.get('/:product_id', asyncHandler(productController.findProduct))
 //authentication
 Router.use(authentication)
 
