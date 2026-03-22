@@ -10,5 +10,7 @@ Router.use(authentication)
 
 Router.post('', asyncHandler(productController.creatProduct))
 
+//query
+Router.get('/drafts/all', asyncHandler(productController.getAllDraftsForShop))
 
 export const productRouter = Router

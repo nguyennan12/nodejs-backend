@@ -1,6 +1,7 @@
 import ApiError from '#core/error.response.js'
 import { productModel, electronicModel, clothingModel, furnitureModel } from '#models/product.model.js'
 import { StatusCodes } from 'http-status-codes'
+import { findAllDraftsForShop } from '#models/repository/product.repo.js'
 
 class ProductFatory {
 
@@ -10,11 +11,18 @@ class ProductFatory {
     ProductFatory.productRegistry[type] = classRef //key<type> : value<classRef>
   }
 
+  //===== CREATE =====
   static async createProduct(type, payload) {
     const productClass = ProductFatory.productRegistry[type]
     if (!productClass) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Product Types ', type)
 
     return new productClass(payload).createProduct()
+  }
+
+  //===== QUERY =====
+  static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isDraft: true }
+    return await findAllDraftsForShop({ query, limit, skip })
   }
 }
 
