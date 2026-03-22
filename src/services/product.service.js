@@ -1,18 +1,20 @@
-/* eslint-disable indent */
 import ApiError from '#core/error.response.js'
-import { productModel, electronicModel, clothingModel } from '#models/product.model.js'
+import { productModel, electronicModel, clothingModel, furnitureModel } from '#models/product.model.js'
 import { StatusCodes } from 'http-status-codes'
 
 class ProductFatory {
+
+  static productRegistry = {}
+
+  static registerProductType(type, classRef) {
+    ProductFatory.productRegistry[type] = classRef //key<type> : value<classRef>
+  }
+
   static async createProduct(type, payload) {
-    switch (type) {
-      case 'Electronics':
-        return new Electronics(payload).createProduct()
-      case 'Clothing':
-        return new Clothing(payload).createProduct()
-      default:
-        throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Product Types ', type)
-    }
+    const productClass = ProductFatory.productRegistry[type]
+    if (!productClass) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Product Types ', type)
+
+    return new productClass(payload).createProduct()
   }
 }
 
@@ -62,5 +64,25 @@ class Electronics extends Product {
     return newProduct
   }
 }
+
+class Furniture extends Product {
+  async createProduct() {
+    const newFurnituries = await furnitureModel.create({
+      ...this.product_attributes,
+      product_shop: this.product_shop
+    })
+    if (!newFurnituries) throw new ApiError(StatusCodes.BAD_REQUEST, 'create new Furniture error')
+
+    const newProduct = await super.createProduct(newFurnituries._id)
+    if (!newProduct) throw new ApiError(StatusCodes.BAD_REQUEST, 'create new Furniture error')
+
+    return newProduct
+  }
+}
+
+//register product types
+ProductFatory.registerProductType('Electronics', Electronics)
+ProductFatory.registerProductType('Clothing', Clothing)
+ProductFatory.registerProductType('Furniture', Furniture)
 
 export default ProductFatory

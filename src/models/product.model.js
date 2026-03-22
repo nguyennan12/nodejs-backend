@@ -3,12 +3,14 @@ import { model, Schema } from 'mongoose'
 const DOCUMENT_NAME = {
   PRODUCT: 'Product',
   ELECTRONIC: 'Electronic',
-  CLOTHING: 'Clothing'
+  CLOTHING: 'Clothing',
+  FURNITURE: 'Furniture'
 }
 const COLLECTION_NAME = {
   PRODUCT: 'Products',
   ELECTRONIC: 'Electronics',
-  CLOTHING: 'Clothes'
+  CLOTHING: 'Clothes',
+  FURNITURE: 'Furniture'
 }
 
 const productSchema = new Schema({
@@ -44,6 +46,16 @@ const electronicSchema = new Schema({
   timestamps: true
 })
 
+const furnitureSchema = new Schema({
+  brand: { type: String, required: true },
+  size: String,
+  material: String
+}, {
+  collection: COLLECTION_NAME.FURNITURE,
+  timestamps: true
+})
+
 export const productModel = model(DOCUMENT_NAME.PRODUCT, productSchema)
 export const clothingModel = model(DOCUMENT_NAME.CLOTHING, clothingSchema)
 export const electronicModel = model(DOCUMENT_NAME.ELECTRONIC, electronicSchema)
+export const furnitureModel = model(DOCUMENT_NAME.FURNITURE, furnitureSchema)
