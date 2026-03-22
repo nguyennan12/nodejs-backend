@@ -5,17 +5,17 @@ class KeyTokenService {
     try {
       const filter = { userId: userId }
       const update = { publicKey, privateKey, refreshTokenUsed: [], refreshToken }
-      const options = { upsert: true, new: true }
+      const options = { upsert: true, new: true, setDefaultsOnInsert: true }
 
       const tokens = await keyTokenModel.findOneAndUpdate(filter, update, options)
-      return tokens ? tokens.publicKey : null
+      return tokens || null
     } catch (error) {
       throw error
     }
   }
 
   static findByUserId = async (userId) => {
-    return await keyTokenModel.findOne({ userId: new Types.ObjectId(userId) }).lean()
+    return await keyTokenModel.findOne({ userId: new Types.ObjectId(userId) })
   }
 
   static removeKeyById = async (id) => {

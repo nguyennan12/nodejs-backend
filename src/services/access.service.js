@@ -1,15 +1,13 @@
 /* eslint-disable no-unused-vars */
-import shopModel from '#models/shop.model.js'
-import bcrypt from 'bcrypt'
-import crypto, { verify } from 'crypto'
-import KeyTokenService from './keyToken.service.js'
 import { createTokenPair, verifyJWT } from '#auth/authUntils.js'
-import { StatusCodes } from 'http-status-codes'
-import { getInfoData } from '#utils/index.js'
 import ApiError from '#core/error.response.js'
+import shopModel from '#models/shop.model.js'
+import { getInfoData } from '#utils/index.js'
+import bcrypt from 'bcrypt'
+import crypto from 'crypto'
+import { StatusCodes } from 'http-status-codes'
+import KeyTokenService from './keyToken.service.js'
 import { shopService } from './shop.service.js'
-import keyTokenModel from '#models/keyToken.model.js'
-import { ref } from 'process'
 
 const ROLE_SHOP = {
   SHOP: 'SHOP',
@@ -38,15 +36,16 @@ class AccessService {
       privateKeyEncoding: { type: 'pkcs1', format: 'pem' }
     })
 
+    const tokens = await createTokenPair({ userId: newShop._id, email }, publicKey, privateKey)
+
     const keyStore = await KeyTokenService.createKeyToken({
       userId: newShop._id,
       publicKey,
-      privateKey
+      privateKey,
+      refreshToken: tokens.refreshToken
     })
 
     if (!keyStore) throw new ApiError(StatusCodes.UNAUTHORIZED, 'keyStore error')
-
-    const tokens = await createTokenPair({ userId: newShop._id, email }, publicKey, privateKey)
 
     return {
       shop: getInfoData({ fields: ['_id', 'name', 'email'], object: newShop }),
@@ -89,29 +88,28 @@ class AccessService {
   }
 
   // ===== refreshToken ======
-  static handlerRefreshToken = async (refreshToken) => {
-    const tokenUsed = await KeyTokenService.findByRefreshTokenUsed(refreshToken)
+  static handlerRefreshToken = async ({ refreshToken, user, keyStore }) => {
+    if (!refreshToken) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid refresh token')
 
-    //token da duoc su dunng r
-    if (tokenUsed) {
-      const { userId, email } = verifyJWT(refreshToken, tokenUsed.publicKey)
+    const { userId, email } = user
+
+    if (keyStore.refreshTokenUsed.includes(refreshToken)) {
       await KeyTokenService.deleteKeyById(userId)
       throw new ApiError(StatusCodes.FORBIDDEN, 'Something wrong happen! please relogin')
     }
 
-    //token dang dc su dung
-    const tokenExists = await KeyTokenService.findByRefreshToken(refreshToken)
-    if (!tokenExists) throw new ApiError(StatusCodes.UNAUTHORIZED, 'shop not registeted')
-    const { userId, email } = verifyJWT(refreshToken, tokenExists.publicKey)
+    if (keyStore.refreshToken !== refreshToken) throw new ApiError(StatusCodes.UNAUTHORIZED, 'shop not registeted')
+
+    verifyJWT(refreshToken, keyStore.publicKey)
 
     const shopExists = await shopService.findByEmail({ email })
     if (!shopExists) throw new ApiError(StatusCodes.UNAUTHORIZED, 'shop not registeted')
 
     //tao cap token moi
-    const tokens = await createTokenPair({ userId, email }, tokenExists.publicKey, tokenExists.privateKey)
+    const tokens = await createTokenPair({ userId, email }, keyStore.publicKey, keyStore.privateKey)
 
-    //update laji token
-    await tokenExists.updateOne({
+    //update lai token
+    await keyStore.updateOne({
       $set: {
         refreshToken: tokens.refreshToken
       },
@@ -120,10 +118,7 @@ class AccessService {
       }
     })
 
-    return {
-      user: { userId, email },
-      tokens
-    }
+    return { user, tokens }
   }
 }
 

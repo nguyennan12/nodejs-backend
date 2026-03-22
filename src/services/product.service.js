@@ -1,6 +1,6 @@
 /* eslint-disable indent */
-import ApiError from '#core/error.response'
-import { productModel, electronicModel, clothingModel } from '#models/product.model'
+import ApiError from '#core/error.response.js'
+import { productModel, electronicModel, clothingModel } from '#models/product.model.js'
 import { StatusCodes } from 'http-status-codes'
 
 class ProductFatory {

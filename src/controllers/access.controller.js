@@ -32,7 +32,11 @@ class AccessController {
     new ApiSuccess({
       statusCode: StatusCodes.OK,
       message: 'Get token successfully!',
-      metadata: await AccessService.handlerRefreshToken(req.body.refreshToken)
+      metadata: await AccessService.handlerRefreshToken({
+        refreshToken: req.refreshToken,
+        user: req.user,
+        keyStore: req.keyStore
+      })
     }).send(res)
   }
 }
