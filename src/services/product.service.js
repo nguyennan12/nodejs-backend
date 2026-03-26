@@ -3,7 +3,8 @@ import { productModel, electronicModel, clothingModel, furnitureModel } from '#m
 import { StatusCodes } from 'http-status-codes'
 import productRepo from '#models/repository/product.repo.js'
 import { updateNestedObjectParser, removeUndefinedObject } from '#utils/index.js'
-
+import inventoryRepo from '#models/repository/inventory.repo.js'
+import { Schema } from 'mongoose'
 
 class ProductFatory {
 
@@ -78,7 +79,15 @@ class Product {
   }
 
   async createProduct(product_id) {
-    return await productModel.create({ ...this, _id: product_id })
+    const newProduct = await productModel.create({ ...this, _id: product_id })
+    if (newProduct) {
+      await inventoryRepo.insertInventory({
+        productId: newProduct.id,
+        shopId: newProduct.product_shop,
+        stock: newProduct.product_quantity
+      })
+    }
+    return newProduct
   }
 
   async updateProduct(productId, payload) {
@@ -102,7 +111,7 @@ class Clothing extends Product {
   }
 
   async updateProduct(productId) {
-    const objectParams = nestedRemoveUndefinedObject(this)
+    const objectParams = updateNestedObjectParser(this)
     if (objectParams.product_attributes) {
       //update child
       await productRepo.updateProductById({ productId, payload: objectParams, model: clothingModel })
