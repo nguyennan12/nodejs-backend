@@ -7,16 +7,18 @@ const Router = express.Router()
 
 Router.get('/search/', asyncHandler(productController.searchProducts))
 Router.get('', asyncHandler(productController.findAllProducts))
-Router.get('/:product_id', asyncHandler(productController.findProduct))
+Router.get('/:productId', asyncHandler(productController.findProduct))
 //authentication
 Router.use(authentication)
 
 //create
 Router.post('', asyncHandler(productController.creatProduct))
 
+Router.patch('/:productId', asyncHandler(productController.updateProduct))
+
 //update
-Router.put('/publish/:id', asyncHandler(productController.publishProductByShop))
-Router.put('/unpublish/:id', asyncHandler(productController.unPublishProductByShop))
+Router.post('/publish/:id', asyncHandler(productController.publishProductByShop))
+Router.post('/unpublish/:id', asyncHandler(productController.unPublishProductByShop))
 
 //query
 Router.get('/drafts/all', asyncHandler(productController.getAllDraftsForShop))

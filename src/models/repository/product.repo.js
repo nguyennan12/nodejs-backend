@@ -1,6 +1,6 @@
 import { productModel } from '#models/product.model.js'
-import { Types } from 'mongoose'
 import { getSelectData, unGetSelectData } from '#utils/index.js'
+import { Types } from 'mongoose'
 
 const queryProduct = async ({ query, limit, skip }) => {
   return await productModel.find(query)
@@ -80,11 +80,16 @@ const findProduct = async ({ product_id, unSelect }) => {
   return await productModel.findById(product_id).select(unGetSelectData(unSelect))
 }
 
+const updateProductById = async ({ productId, payload, model, isNew = true }) => {
+  return await model.findByIdAndUpdate(productId, payload, { returnDocument: 'after' })
+}
+
 export default {
   publishProductByShop,
   unPublishProductByShop,
   queryProduct,
   searchProducts,
   findAllProducts,
-  findProduct
+  findProduct,
+  updateProductById
 }

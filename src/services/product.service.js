@@ -2,6 +2,7 @@ import ApiError from '#core/error.response.js'
 import { productModel, electronicModel, clothingModel, furnitureModel } from '#models/product.model.js'
 import { StatusCodes } from 'http-status-codes'
 import productRepo from '#models/repository/product.repo.js'
+import { updateNestedObjectParser, removeUndefinedObject } from '#utils/index.js'
 
 
 class ProductFatory {
@@ -20,15 +21,19 @@ class ProductFatory {
     return new productClass(payload).createProduct()
   }
 
+  static async updateProduct(type, productId, payload) {
+    const productClass = ProductFatory.productRegistry[type]
+    if (!productClass) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Product Types ', type)
+
+    return new productClass(payload).updateProduct(productId)
+  }
+
   //===== UPDATE =====
   static async publishProductByShop({ product_shop, product_id }) {
     return await productRepo.publishProductByShop({ product_shop, product_id })
   }
   static async unPublishProductByShop({ product_shop, product_id }) {
     return await productRepo.unPublishProductByShop({ product_shop, product_id })
-  }
-  static async updateProduct() {
-
   }
 
   //===== QUERY =====
@@ -75,17 +80,35 @@ class Product {
   async createProduct(product_id) {
     return await productModel.create({ ...this, _id: product_id })
   }
+
+  async updateProduct(productId, payload) {
+
+    return await productRepo.updateProductById({ productId, payload, model: productModel })
+  }
 }
 
 class Clothing extends Product {
   async createProduct() {
-    const newClothing = await clothingModel.create(this.product_attributes)
+    const newClothing = await clothingModel.create({
+      ...this.product_attributes,
+      product_shop: this.product_shop
+    })
     if (!newClothing) throw new ApiError(StatusCodes.BAD_REQUEST, 'create new Clothing error')
 
-    const newProduct = await super.createProduct()
+    const newProduct = await super.createProduct(newClothing._id)
     if (!newProduct) throw new ApiError(StatusCodes.BAD_REQUEST, 'create new Product error')
 
     return newProduct
+  }
+
+  async updateProduct(productId) {
+    const objectParams = nestedRemoveUndefinedObject(this)
+    if (objectParams.product_attributes) {
+      //update child
+      await productRepo.updateProductById({ productId, payload: objectParams, model: clothingModel })
+    }
+    const updatedProduct = await super.updateProduct(productId)
+    return updatedProduct
   }
 
 }
@@ -103,6 +126,16 @@ class Electronics extends Product {
 
     return newProduct
   }
+
+  async updateProduct(productId) {
+    const objectParams = removeUndefinedObject(this)
+    if (objectParams.product_attributes) {
+      //update child
+      await productRepo.updateProductById({ productId, payload: updateNestedObjectParser(objectParams), model: electronicModel })
+    }
+    const updatedProduct = await super.updateProduct(productId)
+    return updatedProduct
+  }
 }
 
 class Furniture extends Product {
@@ -117,6 +150,17 @@ class Furniture extends Product {
     if (!newProduct) throw new ApiError(StatusCodes.BAD_REQUEST, 'create new Furniture error')
 
     return newProduct
+  }
+
+  async updateProduct(productId) {
+    const objectParams = removeUndefinedObject(this)
+    if (objectParams.product_attributes) {
+      //update child
+      await productRepo.updateProductById({ productId, payload: updateNestedObjectParser(objectParams.product_attributes), model: furnitureModel })
+    }
+    const updatePayload = updateNestedObjectParser(objectParams)
+    const updatedProduct = await super.updateProduct(productId, updatePayload)
+    return updatedProduct
   }
 }
 
