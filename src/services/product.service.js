@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import productRepo from '#models/repository/product.repo.js'
 import { updateNestedObjectParser, removeUndefinedObject } from '#utils/index.js'
 import inventoryRepo from '#models/repository/inventory.repo.js'
-import { Schema } from 'mongoose'
+
 
 class ProductFatory {
 
@@ -52,9 +52,12 @@ class ProductFatory {
     return await productRepo.searchProducts({ keySearch })
   }
 
-  static async findAllProducts({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true } }) {
+  static async findAllProducts({ limit = 50, page = 1 }) {
+    const skip = (page - 1) * limit
     return await productRepo.findAllProducts({
-      limit, sort, filter, page,
+      limit: +limit,
+      skip: +skip,
+      filter: { isPublished: true },
       select: ['product_name', 'product_price', 'product_thumb']
     })
   }

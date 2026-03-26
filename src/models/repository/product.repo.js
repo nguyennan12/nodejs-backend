@@ -63,8 +63,7 @@ const unPublishProductByShop = async ({ product_shop, product_id }) => {
   return product
 }
 
-const findAllProducts = async ({ limit, sort, page, filter, select }) => {
-  const skip = (page - 1) * limit
+const findAllProducts = async ({ limit, sort = 'ctime', filter, select }) => {
   const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
   const products = await productModel
     .find(filter)
@@ -80,7 +79,7 @@ const findProduct = async ({ product_id, unSelect }) => {
   return await productModel.findById(product_id).select(unGetSelectData(unSelect))
 }
 
-const updateProductById = async ({ productId, payload, model, isNew = true }) => {
+const updateProductById = async ({ productId, payload, model }) => {
   return await model.findByIdAndUpdate(productId, payload, { returnDocument: 'after' })
 }
 

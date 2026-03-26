@@ -40,3 +40,9 @@
     5 – update and save RT and add RT into RTused
     6 - return  data (info user, tokens)
 
+      ======== DISCOUND SERVICE =========
+     1 - Generator and delete discount code (admin/shop)
+     2 - get discount amount (user)
+     3 - get all discount code (user, shop)
+     4 - verify and cancel discount code (user)
+
