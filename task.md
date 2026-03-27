@@ -64,3 +64,17 @@
                     version
                }
           ]
+
+     ======== CHECKOUT SERVICE (User) =========
+     
+     {
+          cartId,
+          userId, 
+          shop_order_ids: [
+               {
+                    shopId,
+                    shop_discount: [{shopId, discountId, codeId}],
+                    item products: [{price, quantity, productId}]
+               }
+          ]
+     }

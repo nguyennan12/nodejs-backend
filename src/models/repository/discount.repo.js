@@ -15,7 +15,8 @@ const updateDiscount = async ({ discountId, shopId, reqBody }) => {
 }
 
 const findDiscount = async (code, shopId) => {
-  return (await discountModel.findOne({ discount_code: code, discount_shopId: converter.toObjectId(shopId) }))
+  return await discountModel.findOne({ discount_code: code, discount_shopId: converter.toObjectId(shopId) }).lean()
+
 }
 
 const getAllDiscountUnSelect = async ({ limit, sort = 'ctime', skip, filter, unSelect }) => {

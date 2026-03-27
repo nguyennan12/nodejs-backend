@@ -84,6 +84,19 @@ const updateProductById = async ({ productId, payload, model }) => {
   return await model.findByIdAndUpdate(productId, payload, { returnDocument: 'after' })
 }
 
+const checkProductByServer = async (products) => {
+  return await Promise.all(products.map(async product => {
+    const foundProduct = await productModel.findById(product.productId)
+    if (foundProduct) {
+      return {
+        price: foundProduct.product_price,
+        quantity: product.quantity,
+        productId: product.productId
+      }
+    }
+  }))
+}
+
 export default {
   publishProductByShop,
   unPublishProductByShop,
@@ -91,5 +104,6 @@ export default {
   searchProducts,
   findAllProducts,
   findProduct,
-  updateProductById
+  updateProductById,
+  checkProductByServer
 }

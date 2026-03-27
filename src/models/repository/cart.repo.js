@@ -1,4 +1,5 @@
 import cartModel from '#models/cart.model.js'
+import converter from '#utils/converter.js'
 
 
 const createCart = async ({ userId, product }) => {
@@ -40,8 +41,14 @@ const deleteCart = async ({ userId, productId }) => {
   )
 }
 
+const findCartById = async (cardId) => {
+  const result = await cartModel.findOne({ _id: converter.toObjectId(cardId), cart_state: 'active' }).lean()
+  return result
+}
+
 export default {
   createCart,
   updateCartQuantity,
-  deleteCart
+  deleteCart,
+  findCartById
 }
