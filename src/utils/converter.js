@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
 
-const toObjectId = id => Types.ObjectId(id)
+const toObjectId = id => new Types.ObjectId(id)
 
 export default {
   toObjectId

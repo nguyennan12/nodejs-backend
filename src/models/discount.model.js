@@ -20,8 +20,10 @@ const discountSchema = new Schema({
   discount_min_order_value: { type: Number, required: true }, //giá trị tối thiểu để sử dụng discount
   discount_shopId: { type: Schema.Types.ObjectId, ref: 'Shop' },
   discount_is_active: { type: Boolean, default: true },
+  discount_product_ids: { type: Array, default: [] },
   discount_applies_to: { type: String, required: true, enum: ['all', 'specific'] },
-  discount_product_ids: { type: Array, default: [] } //số sản phẩm dc áp dụng
+  isDeleted: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null }
 }, {
   timestamps: true,
   collection: COLLECTION_NAME

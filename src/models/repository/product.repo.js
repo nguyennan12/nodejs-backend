@@ -63,7 +63,7 @@ const unPublishProductByShop = async ({ product_shop, product_id }) => {
   return product
 }
 
-const findAllProducts = async ({ limit, sort = 'ctime', filter, select }) => {
+const findAllProducts = async ({ limit, sort = 'ctime', skip, filter, select }) => {
   const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
   const products = await productModel
     .find(filter)
