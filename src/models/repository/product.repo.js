@@ -1,6 +1,7 @@
 import { productModel } from '#models/product.model.js'
 import { getSelectData, unGetSelectData } from '#utils/index.js'
 import { Types } from 'mongoose'
+import converter from '#utils/converter.js'
 
 const queryProduct = async ({ query, limit, skip }) => {
   return await productModel.find(query)
@@ -76,7 +77,7 @@ const findAllProducts = async ({ limit, sort = 'ctime', skip, filter, select }) 
 }
 
 const findProduct = async ({ product_id, unSelect }) => {
-  return await productModel.findById(product_id).select(unGetSelectData(unSelect))
+  return await productModel.findById(converter.toObjectId(product_id)).select(unGetSelectData(unSelect))
 }
 
 const updateProductById = async ({ productId, payload, model }) => {

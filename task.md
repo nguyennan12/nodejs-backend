@@ -46,3 +46,21 @@
      3 - get all discount code (user, shop)
      4 - verify and cancel discount code (user)
 
+       ======== CARD SERVICE (User) =========
+     1 - add product to cart
+     2 - reduce product quantity
+     3 - increase product quantity
+     4 - get list cart
+     5 - delete list cart
+     6 - delete item in cart
+
+     update: 
+          shop_order_ids: [
+               {
+                    shopId,
+                    item_products: [{
+                         quantity, price, shopId, productId, oldquantity,
+                    }],
+                    version
+               }
+          ]

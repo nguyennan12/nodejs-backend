@@ -1,8 +1,9 @@
 import express from 'express'
-import { accessRouter } from './access/index.js'
+import { accessRouter } from './access/access.router.js'
 import { checkApiKey, checkPermission } from '#auth/checkAuth.js'
-import { productRouter } from './product/index.js'
-import { discountRouter } from './discount/index.js'
+import { productRouter } from './product/product.router.js'
+import { discountRouter } from './discount/discount.router.js'
+import { cartRouter } from './cart/cart.router.js'
 
 const Router = express.Router()
 
@@ -13,6 +14,7 @@ Router.use(checkPermission('0000'))
 
 
 Router.use('/v1/api/product', productRouter)
+Router.use('/v1/api/cart', cartRouter)
 Router.use('/v1/api/discount', discountRouter)
 Router.use('/v1/api/shop', accessRouter)
 
