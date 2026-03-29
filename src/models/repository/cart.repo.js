@@ -30,7 +30,7 @@ const updateCartQuantity = async ({ userId, product }) => {
   )
 }
 
-const deleteCart = async ({ userId, productId }) => {
+const deleteProductInCart = async ({ userId, productId }) => {
   return await cartModel.updateOne(
     { cart_userId: userId, cart_state: 'active' },
     {
@@ -38,6 +38,21 @@ const deleteCart = async ({ userId, productId }) => {
         cart_products: { productId }
       }
     },
+    { new: true }
+  )
+}
+
+const deleteAllProductInCart = async ({ userId, products }) => {
+  return await cartModel.findByIdAndUpdate(
+    {
+      cart_userId: userId, cart_state: 'active'
+    },
+    {
+      $pull: {
+        cart_products: { productId: { $in: products } }
+      }
+    },
+    { new: true }
   )
 }
 
@@ -49,6 +64,7 @@ const findCartById = async (cardId) => {
 export default {
   createCart,
   updateCartQuantity,
-  deleteCart,
-  findCartById
+  deleteProductInCart,
+  findCartById,
+  deleteAllProductInCart
 }

@@ -25,7 +25,10 @@
     "jsonwebtoken": "^9.0.3",
     "lodash": "^4.17.23",
     "mongoose": "^9.3.1",
-    "slugify": "^1.6.8"
+    "redis": "^5.11.0",
+    "slugify": "^1.6.8",
+    "util": "^0.12.5",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "eslint": "^10.0.3",

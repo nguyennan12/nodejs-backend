@@ -52,7 +52,11 @@ const updateProductInCart = async ({ userId, shop_order_ids }) => {
 }
 
 const deleteProductInCart = async ({ userId, productId }) => {
-  return await cartRepo.deleteCart({ userId, productId })
+  return await cartRepo.deleteProductInCart({ userId, productId })
+}
+
+const deleteAllProductInCart = async ({ userId, products }) => {
+  return await cartRepo.deleteAllProductInCart({ userId, products })
 }
 
 //lay cart trong do co list product
@@ -64,5 +68,6 @@ export default {
   addToCart,
   updateProductInCart,
   deleteProductInCart,
-  getListProductInCart
+  getListProductInCart,
+  deleteAllProductInCart
 }

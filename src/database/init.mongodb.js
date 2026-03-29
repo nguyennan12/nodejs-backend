@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import config from '#configs/config.mongodb.js'
+import config from '#configs/mongodb.config.js'
 
 const { url, maxPoolSize } = config.db
 
