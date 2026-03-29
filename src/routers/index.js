@@ -8,6 +8,7 @@ import { checkoutRouter } from './checkout/checkout.router.js'
 import { inventoryRouter } from './inventory/inventory.router.js'
 import { pushToLogDiscord } from '#middleware/discord.log.middleware.js'
 import { commentRouter } from './comment/comment.router.js'
+import { notificationRouter } from './notifications/notification.router.js'
 
 const Router = express.Router()
 
@@ -25,6 +26,7 @@ Router.use('/v1/api/inventory', inventoryRouter)
 Router.use('/v1/api/discount', discountRouter)
 Router.use('/v1/api/shop', accessRouter)
 Router.use('/v1/api/comment', commentRouter)
+Router.use('/v1/api/notification', notificationRouter)
 
 
 export default Router

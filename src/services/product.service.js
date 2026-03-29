@@ -4,6 +4,8 @@ import { StatusCodes } from 'http-status-codes'
 import productRepo from '#models/repository/product.repo.js'
 import { updateNestedObjectParser, removeUndefinedObject } from '#utils/index.js'
 import inventoryRepo from '#models/repository/inventory.repo.js'
+import notiificationService from './notiification.service.js'
+import converter from '#utils/converter.js'
 
 
 class ProductFatory {
@@ -18,7 +20,15 @@ class ProductFatory {
   static async createProduct(type, payload) {
     const productClass = ProductFatory.productRegistry[type]
     if (!productClass) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Product Types ', type)
-
+    notiificationService.pushNotiToSytem({
+      type: 'SHOP-001',
+      receivedId: 3,
+      senderId: converter.toObjectId(payload.product_shop),
+      option: {
+        product_name: payload.product_name,
+        shop_name: payload.product_shop
+      }
+    }).then(rs => console.log(rs)).catch(console.error)
     return new productClass(payload).createProduct()
   }
 
