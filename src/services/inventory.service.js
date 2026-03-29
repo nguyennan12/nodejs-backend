@@ -1,7 +1,7 @@
 import ApiError from '#core/error.response.js'
 import inventoryModel from '#models/inventory.model.js'
 import productRepo from '#models/repository/product.repo.js'
-import converter from '#utils/converter'
+import converter from '#utils/converter.js'
 import { StatusCodes } from 'http-status-codes'
 
 const addStockToInventory = async ({ stock, productId, shopId, location }) => {

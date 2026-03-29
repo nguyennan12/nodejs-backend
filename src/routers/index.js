@@ -6,9 +6,12 @@ import { discountRouter } from './discount/discount.router.js'
 import { cartRouter } from './cart/cart.router.js'
 import { checkoutRouter } from './checkout/checkout.router.js'
 import { inventoryRouter } from './inventory/inventory.router.js'
+import { pushToLogDiscord } from '#middleware/discord.log.middleware.js'
 
 const Router = express.Router()
 
+//add log to discord
+Router.use(pushToLogDiscord)
 //check api key
 Router.use(checkApiKey)
 //check permission

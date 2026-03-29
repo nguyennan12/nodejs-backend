@@ -1,4 +1,4 @@
-import { setnxAsync, pexpireAsync, getAsync, delAsync } from '#config/redis.js'
+import { client } from '#configs/redis.config.js'
 import inventoryRepo from '#models/repository/inventory.repo.js'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -8,27 +8,34 @@ const acquireLock = async (productId, quantity, cartId) => {
   const expireTime = 3000
   const retryTimes = 10
 
-  //đang khóa mà có người khác vào thì sẽ thử 10 lần
   for (let i = 0; i < retryTimes; i++) {
-    const result = await setnxAsync(key, token)
-    if (result === 1) {
-      //thao tac voi inventory
-      const isReversation = await inventoryRepo.reservationInventory({ productId, quantity, cartId })
-      if (isReversation.modifiedCount) {
-        await pexpireAsync(key, expireTime)
+    // Dùng Redis v4: setNX trả về boolean
+    const result = await client.setNX(key, token)
+    if (result) {
+      // thao tac voi inventory
+      const isReservation = await inventoryRepo.reservationInventory({ productId, quantity, cartId })
+      if (isReservation.modifiedCount) {
+        // set thời gian hết hạn
+        await client.pExpire(key, expireTime)
         return { key, token }
+      } else {
+        // nếu thao tác thất bại thì xóa khóa ngay
+        await client.del(key)
+        return null
       }
     }
-    //thử kh dc thì thử lại sao 50ms
+
+    // thử lại sau 50ms nếu bị khóa
     await new Promise(r => setTimeout(r, 50))
   }
+
   return null
 }
 
 const releaseLock = async ({ key, token }) => {
-  const current = await getAsync(key)
+  const current = await client.get(key)
   if (current === token) {
-    await delAsync(key)
+    await client.del(key)
     return true
   }
   return false
