@@ -18,6 +18,7 @@
   "dependencies": {
     "amqplib": "^1.0.2",
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.9.0",
     "cross-env": "^10.1.0",
     "crypto": "^1.0.1",
     "discord.js": "^14.25.1",
@@ -29,6 +30,7 @@
     "kafkajs": "^2.2.4",
     "lodash": "^4.17.23",
     "mongoose": "^9.3.1",
+    "multer": "^2.1.1",
     "redis": "^5.11.0",
     "slugify": "^1.6.8",
     "util": "^0.12.5",
