@@ -1,11 +1,11 @@
 import app from './src/app.js'
 
 const PORT = 3032
-const HOST = 'localhost'
+const HOST = '0.0.0.0'
 const AUTHOR = 'nguyenan'
 
 const server = app.listen(PORT, HOST, () => {
-  console.log(`Hello ${AUTHOR}, I am running at  http://${HOST}:${PORT}`)
+  console.log(`Hello ${AUTHOR}, I am running at http://localhost:${PORT}`)
 })
 
 
